@@ -1,23 +1,34 @@
-import {useEffect} from "react";
-import React from "react";
-import { observer } from "mobx-react";
-import {counterStoreFunction} from "../stores";
-import {runInAction} from "mobx";
-
-const store = counterStoreFunction()
+import React, {useCallback} from "react";
+import {observer} from "mobx-react";
+import {valueStore} from "../stores/valueStore";
+import {ValueController} from "../controller/ValueController";
 
 
 export const CounterFunction = observer(props => {
-    useEffect(() => {
-runInAction( () => {
-    store.count = props.initialCount ?? 0
-})
-    }, [props.initialCount])
+    // useEffect(() => {
+    //     runInAction(() => {
+    //         valueStore.value = props.initialCount ?? 0
+    //     })
+    // }, [props.initialCount])
+
+    //Для доставания значений из тора обращаемся напряму в стор
+    const value = valueStore.value
+    const color = valueStore.color
+
+
+    //Для изменение стора мы обязаны обратиться в контроллер
+    const increaseValue = useCallback(() => {
+        ValueController.increaseValue()
+    },[])
+    const decreaseValue = useCallback(() => {
+        ValueController.decreaseValue()
+    },[])
+
     return (
         <div>
-            <button onClick={store.decrease}>-</button>
-            <span style={{color: store.color}}>{store.count}</span>
-            <button onClick={store.increase}>+</button>
+            <button onClick={decreaseValue}>-</button>
+            <span style={{color: color}}>{value}</span>
+            <button onClick={increaseValue}>+</button>
         </div>
     )
 })
@@ -54,8 +65,6 @@ runInAction( () => {
 //
 
 
-
-
 //
 // import React from "react";
 // import { observer, useLocalObservable } from "mobx-react";
@@ -83,10 +92,6 @@ runInAction( () => {
 //         </div>
 //     )
 // })
-
-
-
-
 
 
 // import React, {useState} from "react";
